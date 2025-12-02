@@ -1,0 +1,59 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title|default:"NUAM - Mantenedor & API" }}</title>
+  <link rel="stylesheet" href="{% static 'css/nuam.css' %}">
+</head>
+<body>
+  <div class="wrap">
+    <h1>NUAM - Mantenedor & API</h1>
+    <p class="desc">Panel principal del sistema NUAM.</p>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Catálogo de empresas</h3>
+        <p>Listado HTML de empresas registradas en NUAM.</p>
+        <a href="{% url 'catalogo' %}">Ver catálogo</a>
+      </div>
+
+      <div class="card">
+        <h3>API REST</h3>
+        <p>Consumo de empresas y países vía JSON (DRF).</p>
+        <a href="/api/">Explorar API</a>
+      </div>
+
+      <div class="card">
+        <h3>Diagrama M.E.R.</h3>
+        <p>Modelo entidad–relación del sistema NUAM.</p>
+        <a href="{% url 'mer' %}">Ver diagrama</a>
+      </div>
+
+      <div class="card">
+        <h3>Convertidor de moneda</h3>
+        <p>Servicio de conversión contra API externa.</p>
+        <a href="{% url 'convertidor' %}">Usar convertidor</a>
+      </div>
+
+      <div class="card">
+        <h3>Gestión de usuario</h3>
+        <p>Registro, inicio de sesión y administración de la cuenta.</p>
+        <a href="{% url 'mi-cuenta' %}">Ir a mi cuenta</a>
+      </div>
+
+      <div class="card">
+        <h3>Gestión de admin</h3>
+        <p>Acceso al panel de administración de Django.</p>
+        <a href="{% url 'admin:index' %}">Ir al admin</a>
+      </div>
+
+      <div class="card">
+        <h3>Docs de la API</h3>
+        <p>Documentación autogenerada (OpenAPI/Swagger) de NUAM.</p>
+        <a href="/docs/" target="_blank">Ver documentación</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

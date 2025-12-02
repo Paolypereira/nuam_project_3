@@ -1,0 +1,21 @@
+{% extends "admin/login.html" %}
+
+{% block content %}
+  {{ block.super }}
+
+  <div style="margin-top: 4rem; text-align: center;">
+    <a href="{% url 'home' %}"
+       style="
+         display:inline-block;
+         padding:10px 22px;
+         border-radius:999px;
+         background:#1e293b;
+         border:1px solid #38bdf8;
+         color:#e2e8f0;
+         font-size:1rem;
+         text-decoration:none;
+       ">
+      ← Volver al sitio
+    </a>
+  </div>
+{% endblock %}

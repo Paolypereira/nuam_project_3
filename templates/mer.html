@@ -1,0 +1,37 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title|default:"Diagrama NUAM (M.E.R.)" }}</title>
+  <link rel="stylesheet" href="{% static 'css/nuam.css' %}">
+</head>
+<body class="mer-body">
+  <h1>Diagrama NUAM (M.E.R.)</h1>
+  <p class="desc">Modelo entidad–relación del sistema NUAM</p>
+
+  <img src="{% static 'diagramas/MER_NUAM2.0.png' %}" alt="Diagrama entidad–relación NUAM" id="zoomable">
+
+  <div class="hint">
+    Usa la rueda del mouse / trackpad para hacer zoom sobre el diagrama.
+  </div>
+
+  <a class="back" href="{% url 'home' %}">← Volver al inicio</a>
+
+  <script>
+    const img = document.getElementById("zoomable");
+    let scale = 1;
+
+    img.addEventListener("wheel", e => {
+      e.preventDefault();
+      if (e.deltaY < 0) scale *= 1.1;
+      else scale /= 1.1;
+
+      if (scale < 0.3) scale = 0.3;
+      if (scale > 8) scale = 8;
+
+      img.style.transform = `scale(${scale})`;
+    });
+  </script>
+</body>
+</html>

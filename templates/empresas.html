@@ -1,0 +1,63 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title|default:"Catálogo de Empresas" }}</title>
+  <link rel="stylesheet" href="{% static 'css/nuam.css' %}">
+</head>
+<body>
+  <div class="table-wrap">
+    <h1>Catálogo de Empresas</h1>
+    <p class="desc">Empresas registradas en NUAM y su información principal.</p>
+
+    <table id="empresas-table">
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Nombre</th>
+          <th>País</th>
+          <th>Moneda</th>
+          <th>Capitalización</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+    <a class="back" href="{% url 'home' %}">← Volver al inicio</a>
+  </div>
+
+  <script>
+    fetch("/catalogo-data/")
+      .then(r => r.json())
+      .then(empresas => {
+        const tbody = document.querySelector("#empresas-table tbody");
+        if (!empresas.length) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = '<td colspan="5" style="text-align:center; color:#94a3b8; padding:1rem;">No hay empresas cargadas.</td>';
+          tbody.appendChild(tr);
+          return;
+        }
+        empresas.forEach(e => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${e.ticker ?? ""}</td>
+            <td>${e.nombre ?? ""}</td>
+            <td>${e.pais ?? ""}</td>
+            <td>${e.moneda ?? ""}</td>
+            <td>${e.capitalizacion ?? ""}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        console.error("Error cargando empresas", err);
+        const tbody = document.querySelector("#empresas-table tbody");
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="5" style="text-align:center; color:#94a3b8; padding:1rem;">Error al cargar datos.</td>';
+        tbody.appendChild(tr);
+      });
+  </script>
+</body>
+</html>

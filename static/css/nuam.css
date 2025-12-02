@@ -1,0 +1,229 @@
+/* ===== Estilos generales ===== */
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #020617;
+    color: #e5e7eb;
+}
+
+/* Contenedor centrado */
+.wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+}
+
+/* Títulos y subtítulos */
+h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #f8fafc;
+    margin: 0 0 .5rem;
+    text-align: center;
+}
+
+p.desc {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin: 0 0 1.5rem;
+    text-align: center;
+}
+
+/* Enlace de volver */
+.back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: #38bdf8;
+    font-size: .95rem;
+    text-decoration: none;
+    text-align: center;
+}
+
+.back:hover {
+    text-decoration: underline;
+}
+
+/* ===== Cards para home / dashboard ===== */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 1.5rem;
+}
+
+.card {
+    background: #020617;
+    border-radius: 14px;
+    border: 1px solid #1f2937;
+    box-shadow: 0 12px 30px rgba(0,0,0,.4);
+    padding: 18px 20px;
+    transition: .2s ease-in-out;
+}
+
+.card:hover {
+    background: #020617;
+    border-color: #334155;
+    transform: translateY(-3px);
+}
+
+.card h3 {
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+    color: #f9fafb;
+}
+
+.card p {
+    margin: 0 0 10px;
+    font-size: .9rem;
+    color: #9ca3af;
+}
+
+.card a {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: .85rem;
+    text-decoration: none;
+    background: #2563eb;
+    color: #e5e7eb;
+}
+
+.card a:hover {
+    background: #1d4ed8;
+}
+
+/* ===== Tablas (empresas) ===== */
+.table-wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,.6);
+    font-size: .9rem;
+}
+
+thead {
+    background: #1e2539;
+    color: #f8fafc;
+    text-align: left;
+}
+
+th, td {
+    padding: .75rem 1rem;
+    border-bottom: 1px solid #1f2937;
+    color: #e2e8f0;
+}
+
+tbody tr:hover {
+    background: #1e2539;
+}
+
+/* ===== MER (diagrama) ===== */
+.mer-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+}
+
+img#zoomable {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.4);
+    cursor: zoom-in;
+    transition: transform .2s ease;
+    transform-origin: center;
+}
+
+.hint {
+    color: #94a3b8;
+    font-size: .8rem;
+    margin-top: 1rem;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* ===== Convertidor de moneda ===== */
+.conv-page {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+}
+
+.conv-card {
+    width: 100%;
+    max-width: 640px;
+    background: #020617;
+    border-radius: 18px;
+    border: 1px solid #1f2937;
+    box-shadow: 0 20px 45px rgba(0,0,0,.65);
+    padding: 24px 26px 22px;
+}
+
+.conv-card h1 {
+    text-align: left;
+}
+
+.conv-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.conv-form label {
+    font-size: .85rem;
+    color: #9ca3af;
+}
+
+.conv-form input,
+.conv-form select {
+    margin-left: 4px;
+    background: #020617;
+    color: #e5e7eb;
+    border: 1px solid #374151;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: .9rem;
+}
+
+.conv-form button {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: none;
+    background: #2563eb;
+    color: #e5e7eb;
+    font-size: .9rem;
+    cursor: pointer;
+}
+
+.conv-form button:hover {
+    background: #1d4ed8;
+}
+
+.conv-result {
+    margin: 0;
+    padding: 10px 12px;
+    background: #020617;
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+    font-size: .8rem;
+    overflow-x: auto;
+}
+
+.conv-back {
+    margin-top: 12px;
+}

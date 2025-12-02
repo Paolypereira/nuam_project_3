@@ -1,0 +1,53 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title|default:"Convertidor de Moneda" }}</title>
+  <link rel="stylesheet" href="{% static 'css/nuam.css' %}">
+</head>
+<body class="conv-page">
+  <div class="conv-card">
+    <h1>Convertidor de Moneda</h1>
+    <p class="desc">Convierte montos desde CLP/COP/PEN a USD usando una API externa.</p>
+
+    <form class="conv-form" onsubmit="convertir(event)">
+      <label>Monto:
+        <input type="number" step="0.01" id="monto" required>
+      </label>
+      <label>Moneda:
+        <select id="moneda">
+          <option value="CLP">CLP</option>
+          <option value="COP">COP</option>
+          <option value="PEN">PEN</option>
+        </select>
+      </label>
+      <button type="submit">Convertir</button>
+    </form>
+
+    <pre class="conv-result" id="resultado">Esperando conversión…</pre>
+
+    <div class="conv-back">
+      <a class="back" href="{% url 'home' %}">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <script>
+    function convertir(e) {
+      e.preventDefault();
+      const monto = document.getElementById("monto").value || 0;
+      const moneda = document.getElementById("moneda").value;
+      const url = `/convertir-moneda/?monto=${encodeURIComponent(monto)}&moneda=${encodeURIComponent(moneda)}`;
+      fetch(url)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("resultado").textContent = "Error al convertir.";
+        });
+    }
+  </script>
+</body>
+</html>

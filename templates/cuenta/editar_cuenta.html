@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Editar cuenta</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; }
+    .wrap { max-width: 360px; margin:4rem auto; background:#111827; padding:1.5rem 1.75rem; border-radius:14px; }
+    label { display:block; margin-top:.75rem; font-size:.9rem; }
+    input { width:100%; padding:.5rem .6rem; margin-top:.25rem; border-radius:6px; border:1px solid #1f2937; }
+    button { margin-top:1rem; padding:.5rem 1rem; border-radius:999px; border:none; background:#38bdf8; color:#0f172a; cursor:pointer; }
+    a { color:#38bdf8; text-decoration:none; font-size:.9rem; }
+    .hint { margin-top:1rem; font-size:.85rem; color:#94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Editar cuenta</h2>
+
+    <div class="hint">
+      Para cambiar su contraseña, ingrese el código que se ha enviado a su correo electrónico.
+      (Solo mensaje demostrativo, sin validación real.)
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <label>Correo electrónico
+        {{ form.email }}
+      </label>
+      <button type="submit">Guardar cambios</button>
+    </form>
+    <p style="margin-top:1rem;">
+      <a href="{% url 'mi-cuenta' %}">← Volver a mi cuenta</a>
+    </p>
+  </div>
+</body>
+</html>

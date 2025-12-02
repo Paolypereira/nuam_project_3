@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Eliminar cuenta</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; }
+    .wrap { max-width: 360px; margin:4rem auto; background:#111827; padding:1.5rem 1.75rem; border-radius:14px; }
+    button { margin-top:1rem; padding:.5rem 1rem; border-radius:999px; border:none; background:#b91c1c; color:#fef2f2; cursor:pointer; }
+    a { color:#38bdf8; text-decoration:none; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Eliminar cuenta</h2>
+    <p>¿Seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">Sí, eliminar mi cuenta</button>
+    </form>
+    <p style="margin-top:1rem;">
+      <a href="{% url 'mi-cuenta' %}">← Cancelar y volver</a>
+    </p>
+  </div>
+</body>
+</html>

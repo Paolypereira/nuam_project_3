@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Mercados Tributarias</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Mercados Tributarias</h1>
+
+    <h2>Agregar / Editar Calificación Tributaria</h2>
+    <form id="mercados-form">
+        <input type="hidden" id="mercados-id" />
+        <label>Tipo:</label><br/>
+        <input type="text" id="tipo" required /><br/>
+        <label>Monto:</label><br/>
+        <input type="number" id="monto" step="0.01" required /><br/>
+        <label>Factor:</label><br/>
+        <input type="number" id="factor" step="0.0001" required /><br/>
+        <label>Fecha:</label><br/>
+        <input type="date" id="fecha" required /><br/>
+        <label>Fuente:</label><br/>
+        <input type="text" id="fuente" required /><br/>
+        <label>Estado:</label><br/>
+        <select id="estado">
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+        </select><br/><br/>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <table id="mercados-table">
+        <thead>
+            <tr>
+                <th>ID</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('calificacion-form');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('calificacion-id').value;
+            const tipo = document.getElementById('tipo').value;
+            const monto = parseFloat(document.getElementById('monto').value);
+            const factor = parseFloat(document.getElementById('factor').value);
+            const fecha = document.getElementById('fecha').value;
+            const fuente = document.getElementById('fuente').value;
+            const estado = document.getElementById('estado').value === 'true';
+
+            const payload = { tipo, monto, factor, fecha, fuente, estado, instrumento: 1 };
+
+            if (id) {
+                // Actualizar
+                const response = await fetch(`/api/mercados/${id}/`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                if (response.ok) {
+                    alert('Calificación actualizada con éxito');
+                    fetchMercados();
+                    form.reset();
+                }
+            } else {
+                // Crear
+                const response = await fetch('/api/mercados/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                if (response.ok) {
+                    alert('Calificación creada con éxito');
+                    fetchMercados();
+                    form.reset();
+                }
+            }
+        });
+
+        async function fetchMercados() {
+            const response = await fetch('/api/mercados/');
+            const data = await response.json();
+            const tbody = document.querySelector('#mercados-table tbody');
+            tbody.innerHTML = '';
+            data.forEach(cal => {
+                const row = `<tr>
+                    <td>${cal.id}</td>
+                    <td>${cal.tipo}</td>
+                    <td>${cal.monto}</td>
+                    <td>${cal.fecha}</td>
+                    <td>
+                        <button onclick='editarCalificacion(${JSON.stringify(cal)})'>Editar</button>
+                        <button onclick='eliminarCalificacion(${cal.id})'>Eliminar</button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function editarCalificacion(calificacion) {
+            document.getElementById('calificacion-id').value = calificacion.id;
+            document.getElementById('tipo').value = calificacion.tipo;
+            document.getElementById('monto').value = calificacion.monto;
+            document.getElementById('factor').value = calificacion.factor;
+            document.getElementById('fecha').value = calificacion.fecha;
+            document.getElementById('fuente').value = calificacion.fuente;
+            document.getElementById('estado').value = calificacion.estado ? 'true' : 'false';
+        }
+
+        async function eliminarCalificacion(id) {
+            if (confirm('¿Está seguro de eliminar esta calificación?')) {
+                const response = await fetch(`/api/mercados/${id}/`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    alert('Calificación eliminada');
+                    fetchMercados();
+                    form.reset();
+                } else {
+                    alert('Error al eliminar');
+                }
+            }
+        }
+
+        fetchMercados();
+    </script>
+</body>
+</html>
