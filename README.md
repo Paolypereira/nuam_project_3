@@ -3,7 +3,7 @@
 **NUAM** es una aplicación desarrollada en **Django + Django REST Framework**, que permite administrar información bursátil de los mercados de **Chile, Colombia y Perú**.  
 El proyecto incluye un **panel administrativo**, una **API funcional**, un **catálogo de empresas**, y un **modelo de datos (M.E.R)** accesible desde la interfaz principal.
 
----Comentario del Profe:
+---
 
 ## 📁 Estructura general del proyecto
 
@@ -26,7 +26,7 @@ Antes de comenzar, asegúrate de tener instalado:
 ### 1️⃣ Clonar el repositorio
 
 ```bash
-git clone https://github.com/Paolypereira/nuam_project.git
+git clone https://github.com/Paolypereira/nuam_project2.git
 
 cd nuam_project
 
