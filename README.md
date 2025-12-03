@@ -23,24 +23,6 @@ El proyecto incluye un **panel administrativo**, una **API funcional**, un **cat
 
 ---
 
-## ✅ Funcionalidades principales
-
-- Panel administrativo completo con Django Admin (CRUD sobre empresas, países y tablas relacionadas).  
-- Catálogo HTML de empresas, cargado dinámicamente desde la API (fetch a `/catalogo-data/`).  
-- API REST operativa con Django REST Framework:  
-  - `GET /api/empresas/`, `POST`, `PUT`, `DELETE` según permisos.  
-  - `GET /api/paises/`  
-  - `GET /api/top-empresas/?pais=CHL&n=5`  
-- Documentación autogenerada OpenAPI/Swagger:  
-  - Swagger UI en `/swagger/`  
-  - ReDoc en `/redoc/`  
-- Modelo entidad–relación (M.E.R) accesible desde `/mer/` con zoom sobre la imagen.  
-- Convertidor de moneda conectado a API externa en `/convertir-moneda/`.  
-- Manejo de errores 404/500 personalizados y logging a archivo (`logs/django_errors.log`).  
-- Integración con Kafka (publicación de eventos cuando se crea/edita una Empresa).  
-
----
-
 ## ⚙️ Requisitos previos
 
 | Herramienta        | Windows                                                             | Linux/Ubuntu                                        |
