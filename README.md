@@ -3,21 +3,50 @@
 **NUAM** es una aplicación desarrollada en **Django + Django REST Framework**, que permite administrar información bursátil de los mercados de **Chile, Colombia y Perú**.  
 El proyecto incluye un **panel administrativo**, una **API funcional**, un **catálogo de empresas**, y un **modelo de datos (M.E.R)** accesible desde la interfaz principal.
 
----Comentario del Profe:
+---
 
-## 📁 Estructura general del proyecto
+## ✅ Funcionalidades principales
 
+- Panel administrativo completo con Django Admin (CRUD sobre empresas, países y tablas relacionadas).  
+- Catálogo HTML de empresas, cargado dinámicamente desde la API (fetch a `/catalogo-data/`).  
+- API REST operativa con Django REST Framework:  
+  - `GET /api/empresas/`, `POST`, `PUT`, `DELETE` según permisos.  
+  - `GET /api/paises/`  
+  - `GET /api/top-empresas/?pais=CHL&n=5`  
+- Documentación autogenerada OpenAPI/Swagger:  
+  - Swagger UI en `/swagger/`  
+  - ReDoc en `/redoc/`  
+- Modelo entidad–relación (M.E.R) accesible desde `/mer/` con zoom sobre la imagen.  
+- Convertidor de moneda conectado a API externa en `/convertir-moneda/`.  
+- Manejo de errores 404/500 personalizados y logging a archivo (`logs/django_errors.log`).  
+- Integración con Kafka (publicación de eventos cuando se crea/edita una Empresa).  
+
+---
+
+## ✅ Funcionalidades principales
+
+- Panel administrativo completo con Django Admin (CRUD sobre empresas, países y tablas relacionadas).  
+- Catálogo HTML de empresas, cargado dinámicamente desde la API (fetch a `/catalogo-data/`).  
+- API REST operativa con Django REST Framework:  
+  - `GET /api/empresas/`, `POST`, `PUT`, `DELETE` según permisos.  
+  - `GET /api/paises/`  
+  - `GET /api/top-empresas/?pais=CHL&n=5`  
+- Documentación autogenerada OpenAPI/Swagger:  
+  - Swagger UI en `/swagger/`  
+  - ReDoc en `/redoc/`  
+- Modelo entidad–relación (M.E.R) accesible desde `/mer/` con zoom sobre la imagen.  
+- Convertidor de moneda conectado a API externa en `/convertir-moneda/`.  
+- Manejo de errores 404/500 personalizados y logging a archivo (`logs/django_errors.log`).  
+- Integración con Kafka (publicación de eventos cuando se crea/edita una Empresa).  
 
 ---
 
 ## ⚙️ Requisitos previos
 
-Antes de comenzar, asegúrate de tener instalado:
-
-| Herramienta | Windows | Linux/Ubuntu |
-|--------------|----------|--------------|
-| **Python 3.10+** | ✅ [Descargar desde python.org](https://www.python.org/downloads/) | `sudo apt install python3 python3-venv python3-pip` |
-| **Git** | ✅ [Descargar desde git-scm.com](https://git-scm.com/downloads) | `sudo apt install git` |
+| Herramienta        | Windows                                                             | Linux/Ubuntu                                        |
+|--------------------|---------------------------------------------------------------------|-----------------------------------------------------|
+| **Python 3.10+**   | ✅ [Descargar desde python.org](https://www.python.org/downloads/)  | `sudo apt install python3 python3-venv python3-pip` |
+| **Git**            | ✅ [Descargar desde git-scm.com](https://git-scm.com/downloads)     | `sudo apt install git`                              |
 
 ---
 
@@ -25,182 +54,181 @@ Antes de comenzar, asegúrate de tener instalado:
 
 ### 1️⃣ Clonar el repositorio
 
-```bash
-git clone https://github.com/Paolypereira/nuam_project.git
-
+git clone https://github.com/Paolypereira/nuam_project2.git
 cd nuam_project
 
-2️⃣ Crear entorno virtual
-🪟 En Windows PowerShell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+text
 
-🐧 En Linux / Ubuntu
+### 2️⃣ Crear entorno virtual
+
+**Windows PowerShell:**
+
+python -m venv .venv
+..venv\Scripts\Activate.ps1
+
+text
+
+**Linux / Ubuntu:**
+
 python3 -m venv .venv
 source .venv/bin/activate
 
-⚠️ Nota:
-En Windows, si aparece un error de permisos al activar el entorno virtual, ejecuta PowerShell como **Administrador** una sola vez y usa el comando:
-`Set-ExecutionPolicy RemoteSigned`
-Luego puedes seguir los pasos normalmente.
+text
 
-3️⃣ Instalar dependencias
+⚠️ En Windows, si aparece error al activar el entorno, ejecuta PowerShell como Administrador y usa:
+
+Set-ExecutionPolicy RemoteSigned
+
+text
+
+### 3️⃣ Instalar dependencias
+
 pip install -r requirements.txt
 
-4️⃣ Aplicar migraciones de base de datos
+text
+
+### 4️⃣ Aplicar migraciones de base de datos
+
 python manage.py migrate
 
-5️⃣ Cargar países base (Chile, Colombia, Perú)
+text
+
+### 5️⃣ Cargar países base (Chile, Colombia, Perú)
+
 python manage.py cargar_paises
 
-6️⃣ Cargar datos bursátiles desde Excel
+text
 
-El archivo de datos bursátiles se encuentra dentro del proyecto, en la carpeta:
+### 6️⃣ Cargar datos bursátiles desde Excel
 
-nuam_project\cargas\2025\10\Informe_Bursátil_Regional_2025-08.xlsx
+El archivo Excel está en:
 
-🧩 Paso a paso
+cargas/2025/10/Informe_Bursatil_Regional_2025-08.xlsx
 
-    1️⃣ Abre la carpeta del proyecto en Visual Studio Code o en la terminal.
+text
 
-    2️⃣ Confirma que la ruta del archivo existe. En Windows, puedes copiar la ruta completa desde el Explorador de Archivos:
+Pasos para importar:
 
-    Haz clic derecho sobre el archivo → “Copiar como ruta”
+- Copia la ruta del archivo completo (en Windows clic derecho → “Copiar como ruta”).  
+- Ejecuta:
 
-    Pégala entre comillas en el siguiente comando.
+python manage.py seed_empresas --file "ruta_completa_a_tu_excel.xlsx"
 
-    3️⃣ Ejecuta el comando en la terminal (reemplazando si es necesario la ruta según tu usuario):
+text
 
-    python manage.py seed_empresas --file "C:\Users\alumnosnunoa\nuam_project\cargas\2025\10\Informe_Bursátil_Regional_2025-08.xlsx"
+El sistema detectará y mostrará resultados como:
 
-    4️⃣ Si el archivo está en una ruta distinta, usa la ruta que copiaste en el paso 2.
+✅ Empresas creadas: 0, actualizadas: 159, omitidas: 72
 
-    5️⃣ El sistema detectará automáticamente la hoja Nemo-Cap. Bur|Ticker-Market Cap y mostrará un resultado similar a:
+text
 
-    ✅ Empresas creadas: 0, actualizadas: 159, omitidas: 72
+### 7️⃣ Ejecutar el servidor de desarrollo
 
-    Esto significa que los datos fueron importados correctamente a la base de datos.
+**Windows:**
 
-    
-
-7️⃣ Ejecutar el servidor de desarrollo
-Windows:
 python manage.py runserver
 
-Linux / Ubuntu:
+text
+
+**Linux / Ubuntu:**
+
 python3 manage.py runserver
 
-8️⃣ Luego abre tu navegador en:
-👉 http://127.0.0.1:8000/
+text
 
-🧩 Usuario sugerido 
-usuario: profe
-contraseña: profe1234
+### 8️⃣ Abrir el sitio en el navegador
 
-🖥️ Interfaz principal
+[http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-Al acceder al sitio verá tres opciones:
+---
 
-Sección	Descripción
-🏢 Catálogo de Empresas	Visualiza las empresas cargadas desde el Excel.
-⚙️ Panel Admin	CRUD completo mediante Django Admin.
-🧩 Diagrama NUAM (M.E.R)	Visualización del modelo de datos.
-🔗 Enlaces importantes
-URL	Descripción
-/	Página principal con enlaces
-/admin/	Panel administrativo
-/api/	API Django REST Framework
-/api/empresas/	Listado y CRUD vía API
-/api/paises/	Consulta de países
-/api/top-empresas/?pais=CHL&n=5	Empresas con mayor capitalización
-/static/diagramas/ERD_NUAM.png	Diagrama Entidad–Relación
-/api/demo/empresas/	Catálogo visual (HTML + JS)
+## 🖥️ Interfaz principal y usuarios
 
+Al ingresar verás estas opciones:
 
-🧱 Tecnologías utilizadas
+| Sección                 | Descripción                                        |
+|-------------------------|----------------------------------------------------|
+| 🏢 Catálogo de Empresas   | Visualiza las empresas cargadas desde Excel.     |
+| ⚙️ Panel Admin           | CRUD completo mediante Django Admin.              |
+| 🧩 Diagrama NUAM (M.E.R) | Visualización del modelo de datos.               |
+| 🔄 Convertidor de moneda  | Para convertir entre CLP, COP, PEN y USD.       |
+| 🔌 API REST              | Acceso a la API REST y documentación Swagger UI. |
 
-Django 5.2.7
+### Usuario para login
 
-Django REST Framework
+- Crear su propio superusuario 
 
-drf-spectacular (documentación OpenAPI)
+---
 
-django-filter
+## 🔌 API RESTful NUAM
 
-SQLite3
+Construida con **Django REST Framework**, la API es completamente funcional:
 
-HTML + CSS + JS
+- `GET /api/empresas/` — Lista paginada con filtros.  
+- `GET /api/empresas/{id}/` — Detalle empresa.  
+- `POST /api/empresas/` — Crear empresa (requiere autenticación).  
+- `PUT/PATCH /api/empresas/{id}/` — Actualizar empresa.  
+- `DELETE /api/empresas/{id}/` — Eliminar empresa.  
+- `GET /api/paises/` — Lista de países.  
+- `GET /api/top-empresas/?pais=CHL&n=5` — Empresas top por país.  
 
-🧩 Modelo Entidad-Relación (M.E.R)
+### 📚 Documentación OpenAPI / Swagger
 
-Ubicado en:
+- Visualiza Swagger UI en: `/swagger/`  
+- Documentación ReDoc en: `/redoc/`  
 
-/static/diagramas/ERD_NUAM.png
+Permite explorar, probar y validar los endpoints directamente.
 
+---
 
-Representa las entidades principales:
+## 🧩 Modelo Entidad-Relación (M.E.R)
 
-País
+- Imagen: `static/diagramas/MER_NUAM2.0.png`  
+- Vista dedicada en: `/mer/` (permite zoom con la rueda del mouse).  
+- Entidades principales: País, Empresa, Normativa, Calificación Tributaria, Instrumentos No Inscritos, Historial de Cambios, Valor de Instrumentos.
 
-Empresa
+---
 
-Normativa
+## 🛡️ Manejo de errores, logging y seguridad
 
-Calificación Tributaria
+- Páginas personalizadas para errores 404 y 500 en `templates/errors/`.  
+- Archivo de logs para errores: `logs/django_errors.log`.  
+- Preparado para https y seguridad avanzada en `settings.py` (cookies seguras, HSTS, XSS, etc.).
 
-Instrumentos No Inscritos
+---
 
-Historial de Cambios
+## 📡 Integración con Kafka (Pub/Sub)
 
-Valor de Instrumentos
+- Publica mensajes en Kafka al crear o actualizar Empresas.  
+- Scripts de prueba incluidos para productor y consumidor.  
+- Mensajes con campos clave (`ticker`, `nombre`, `pais`, `moneda`, `capitalizacion`).  
 
-🧹 Archivos ignorados por Git
+---
 
-El archivo .gitignore incluye:
+## 🧹 Archivos ignorados por Git
+
+El `.gitignore` incluye:
 
 *.pyc
-__pycache__/
+pycache/
 .env
 .venv/
 db.sqlite3
 *.xlsx
 /staticfiles/
+logs/
 
-✅ Autores
+text
 
-Proyecto académico NUAM
-Desarrollado por el equipo de estudiantes de Analista Programador - INACAP
-    -   Jenny Latorre
-    -   Yamilet Maldonado
-    -   Paola Pereira
+---
 
+## 🎓 Sugerencia de recorrido para la evaluación
 
-🧾 Ejemplo de ejecución rápida (Linux)
-git clone https://github.com/Paolypereira/nuam_project.git
-cd nuam_project/nuam_project
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python3 manage.py migrate
-python3 manage.py cargar_paises
-python3 manage.py seed_empresas --file "Informe_Bursátil_Regional_2025-08.xlsx"
-python3 manage.py runserver
-Luego abrir:
-👉 http://127.0.0.1:8000/
-
-🧠 Recomendación para evaluación en máquina virtual (Linux/Ubuntu)
-
-Si ejecuta en un entorno limpio:
-
-Clonar el repositorio y seguir las instrucciones desde el paso 2.
-
-Verificar que el entorno tiene permisos de lectura/escritura en la carpeta del proyecto.
-
-Asegurar que el archivo Excel esté en la raíz del proyecto antes de ejecutar seed_empresas.
-
-Acceder desde el navegador interno o externo a http://127.0.0.1:8000/
-
-Ingresar al panel admin con:
-
-usuario: profe
-contraseña: profe1234
+1. Mostrar el **dashboard** (`/`) con tarjetas activas.  
+2. Navegar el **catálogo** (`/catalogo/`) mostrando importación desde Excel.  
+3. Mostrar el **panel admin** (`/admin/`) con CRUD de Empresas.  
+4. Demostrar la **API** (`/api/empresas/`, `/api/paises/`).  
+5. Explorar la documentación en `/swagger/` y `/redoc/`.  
+6. Ver el diagrama **M.E.R.** (`/mer/`).  
+7. Probar el convertidor en `/convertir-moneda/`.  
+8. Mencionar la integración con Kafka y manejo de logs.
