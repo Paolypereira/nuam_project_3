@@ -33,6 +33,7 @@ El proyecto incluye un **panel administrativo**, una **API funcional**, un **cat
 
 ---
 
+text
 ## 🚀 Instalación y ejecución
 
 ### 1️⃣ Clonar el repositorio
@@ -64,13 +65,24 @@ Set-ExecutionPolicy RemoteSigned
 
 text
 
-### 3️⃣ Instalar dependencias
+### 3️⃣ Crear carpeta de logs
+
+En una instalación nueva la carpeta `logs/` no existe (Git no versiona carpetas vacías).  
+Debe crearse manualmente en la raíz del proyecto (donde está `manage.py`):
+
+mkdir logs
+
+text
+
+Django usará esta carpeta para escribir el archivo `logs/django_errors.log`.
+
+### 4️⃣ Instalar dependencias
 
 pip install -r requirements.txt
 
 text
 
-### 4️⃣ Aplicar migraciones de base de datos
+### 5️⃣ Aplicar migraciones de base de datos
 
 python manage.py migrate
 
@@ -78,7 +90,7 @@ text
 
 **Error común:** Si falla, elimina `db.sqlite3` y repite el paso.
 
-### 5️⃣ **CREAR SUPERUSUARIO (OBLIGATORIO para Admin)**
+### 6️⃣ **CREAR SUPERUSUARIO (OBLIGATORIO para Admin)**
 
 python manage.py createsuperuser
 
@@ -86,13 +98,13 @@ text
 
 Ingresa username, email y password. **Guarda estos datos para login.**
 
-### 6️⃣ Cargar países base (Chile, Colombia, Perú)
+### 7️⃣ Cargar países base (Chile, Colombia, Perú)
 
 python manage.py cargar_paises
 
 text
 
-### 7️⃣ Cargar datos bursátiles desde Excel
+### 8️⃣ Cargar datos bursátiles desde Excel
 
 El archivo Excel está en:
 
@@ -121,7 +133,7 @@ El sistema detectará y mostrará resultados como:
 
 text
 
-### 8️⃣ Ejecutar el servidor de desarrollo
+### 9️⃣ Ejecutar el servidor de desarrollo
 
 **Windows:**
 
@@ -141,13 +153,13 @@ Starting development server at http://127.0.0.1:8000/
 
 text
 
-### 9️⃣ **ABRIR EL SITIO EN EL NAVEGADOR**
+### 🔟 **ABRIR EL SITIO EN EL NAVEGADOR**
 
-1. Abre Chrome/Firefox/Edge
-2. Copia y pega: `http://127.0.0.1:8000/`
-3. **Presiona ENTER** 🎉
+1. Abre Chrome/Firefox/Edge  
+2. Copia y pega: `http://127.0.0.1:8000/`  
+3. **Presiona ENTER** 🎉  
 
-**¡Ya está funcionando!**
+**¡Listo, ya está funcionando!**
 
 ---
 
@@ -179,13 +191,11 @@ Al ingresar verás estas opciones:
 docker run -d --name zookeeper -p 2181:2181 zookeeper:3.7
 docker run -d --name kafka -p 9092:9092 --link zookeeper:zookeeper -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 confluentinc/cp-kafka:7.5.0
 
-text
 
 **Terminal 2 - Crear topic (una vez):**
 
 docker exec kafka kafka-topics --create --topic empresas-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 
-text
 
 **Error puerto Windows:** `docker rm -f kafka` y repite.
 
@@ -280,8 +290,6 @@ db.sqlite3
 *.xlsx
 /staticfiles/
 logs/
-
-text
 
 ---
 
