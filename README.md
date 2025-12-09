@@ -37,7 +37,7 @@ El proyecto incluye un **panel administrativo**, una **API funcional**, un **cat
 
 ### 1️⃣ Clonar el repositorio
 
-git clone https://github.com/Paolypereira/nuam_project3.git
+git clone https://github.com/Paolypereira/nuam_project_3.git
 cd nuam_project
 
 
@@ -411,5 +411,6 @@ logs/
 El manual de usuario detallado está disponible en formato PDF en este repositorio.  
 Puedes descargarlo o visualizarlo aquí:  
 [Manual de usuario NUAM (PDF)](Manual%20de%20usuario%20NUAM.pdf)
-#   n u a m _ p r o j e c t _ 3  
+#   n u a m _ p r o j e c t _ 3 
+ 
  

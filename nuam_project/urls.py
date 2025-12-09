@@ -6,10 +6,10 @@ from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.views.generic import TemplateView
 from mercados.views import (
     home,
     mer_view,
-    demo_empresas,
     empresas_sin_paginacion,
     signup_view,
     mi_cuenta,
@@ -17,6 +17,8 @@ from mercados.views import (
     eliminar_cuenta,
     convertidor_view,
     convertir_moneda,
+    dashboard_monedas,
+    datos_dashboard_monedas,
 )
 
 def redirect_to_site(request):
@@ -26,12 +28,20 @@ urlpatterns = [
     path("ver-sitio/", redirect_to_site, name="ver-sitio"),
 
     path("", home, name="home"),
-    path("catalogo/", demo_empresas, name="catalogo"),
+    path("catalogo/", TemplateView.as_view(template_name="empresas.html"), name="catalogo"),
     path("catalogo-data/", empresas_sin_paginacion, name="catalogo-data"),
     path("mer/", mer_view, name="mer"),
 
     path("convertir-moneda/", convertidor_view, name="convertidor"),
     path("api/convertir-moneda/", convertir_moneda, name="convertir-moneda-api"),
+
+    # NUEVO: dashboard de monedas
+    path("dashboard-monedas/", dashboard_monedas, name="dashboard-monedas"),
+    path(
+        "api/convertir-moneda-dashboard/",
+        datos_dashboard_monedas,
+        name="dashboard-monedas-data",
+    ),
 
     path(
         "cuenta/login/",
@@ -48,11 +58,11 @@ urlpatterns = [
     path("cuenta/editar/", editar_cuenta, name="editar-cuenta"),
     path("cuenta/eliminar/", eliminar_cuenta, name="eliminar-cuenta"),
 
-    path("api/", include("mercados.urls")),   # <‑‑ aquí se engancha la API REST
-
+    path("api/", include("mercados.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
 ]
+
 
 schema_view = get_schema_view(
     openapi.Info(

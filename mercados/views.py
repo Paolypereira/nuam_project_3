@@ -15,6 +15,10 @@ from .forms import SignupForm, UserUpdateForm
 from .models import Pais, Empresa
 import logging
 logger = logging.getLogger(__name__)
+from django.shortcuts import render
+
+def dashboard_monedas(request):
+    return render(request, "dashboard_monedas.html")
 from .serializers import PaisSerializer, EmpresaSerializer
 
 
@@ -28,13 +32,93 @@ def home(request):
             "convertidor": "/convertir-moneda/",
         }
     })
+from django.http import JsonResponse
+import requests
 
-# -------- CATÁLOGO EMPRESAS (frontend que lista empresas) --------
-def demo_empresas(request):
-    return render(request, "empresas.html", {
-        "title": "Catálogo de Empresas"
+def datos_dashboard_monedas(request):
+    base = request.GET.get("base", "USD")  # "USD", "CLP", "COP", "PEN", "UF"
+    try:
+        periodo = int(request.GET.get("periodo", "7"))
+    except ValueError:
+        periodo = 7
+
+    url = "https://api.exchangerate-api.com/v4/latest/USD"
+    r = requests.get(url, timeout=5)
+    data = r.json()
+    rates = data.get("rates", {})
+
+    # Códigos reales en la API
+    monedas = ["CLP", "COP", "PEN", "CLF"]  # CLF = UF en la API
+
+    labels = []
+    valores = []
+    valores_para_ranking = {}
+
+    # ---- comparación actual, respetando la base elegida ----
+    for m in monedas:
+        if m in rates:
+            etiqueta = "UF" if m == "CLF" else m
+            labels.append(etiqueta)
+
+            # valor de 1 unidad de esa moneda en USD
+            valor_usd = 1 / rates[m]
+
+            # moneda base elegida por el usuario
+            base_code = "CLF" if base == "UF" else base
+            if base_code == "USD":
+                valor = valor_usd
+            elif base_code in rates:
+                # valor de 1 unidad de la base en USD
+                valor_base_usd = 1 / rates[base_code]
+                # cuánto vale 1 unidad de m en unidades de la base
+                valor = valor_usd / valor_base_usd
+            else:
+                # si la base no existe en la API, caer a USD
+                valor = valor_usd
+
+            valor_red = round(valor, 4)
+            valores.append(valor_red)
+            valores_para_ranking[etiqueta] = valor_red
+
+    # ---- histórico simulado (solo cambia etiqueta de base) ----
+    labels_hist = [f"Día {i}" for i in range(1, periodo + 1)]
+    colores = {
+        "CLP": "#4e79a7",
+        "COP": "#f28e2b",
+        "PEN": "#e15759",
+        "CLF": "#76b7b2",
+    }
+    series = []
+    for m in monedas:
+        if m in rates:
+            base_val = 1 / rates[m]  # valor en USD, solo para forma de la curva
+            puntos = []
+            for i in range(periodo):
+                factor = 1 + (i - periodo / 2) * 0.005
+                puntos.append(round(base_val * factor, 4))
+            series.append({
+                "label": f"{'UF' if m=='CLF' else m} vs {base}",
+                "data": puntos,
+                "borderColor": colores[m],
+                "fill": False,
+                "tension": 0.2,
+            })
+
+    max_moneda = min_moneda = None
+    if valores_para_ranking:
+        max_moneda = max(valores_para_ranking, key=valores_para_ranking.get)
+        min_moneda = min(valores_para_ranking, key=valores_para_ranking.get)
+
+    return JsonResponse({
+        "base": base,
+        "labels": labels,
+        "valores": valores,
+        "labels_historico": labels_hist,
+        "series": series,
+        "fecha": data.get("date"),
+        "max_moneda": max_moneda,
+        "min_moneda": min_moneda,
     })
-
 
 # -------- DIAGRAMA NUAM (M.E.R.) --------
 def mer_view(request):

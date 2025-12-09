@@ -1,0 +1,160 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard de Monedas</title>
+  <link rel="stylesheet" href="{% static 'css/nuam.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="conv-page">
+  <div class="conv-card">
+    <h1>Dashboard Visualización de Datos</h1>
+    <p>Visualización de valores de CLP, COP, PEN y UF frente a USD.</p>
+
+    <!-- Controles -->
+    <div class="conv-form" style="margin-bottom: 20px;">
+      <label>Moneda base:
+        <select id="base">
+          <option value="USD">USD</option>
+          <option value="CLP">CLP</option>
+          <option value="COP">COP</option>
+          <option value="PEN">PEN</option>
+          <option value="UF">UF</option>
+        </select>
+      </label>
+
+      <label>Período:
+        <select id="periodo">
+          <option value="7">Últimos 7 días</option>
+          <option value="30">Últimos 30 días</option>
+        </select>
+      </label>
+
+      <button type="button" onclick="actualizar()">Actualizar</button>
+    </div>
+
+    <!-- Gráfico 1: comparación actual -->
+    <h2>Comparación actual</h2>
+    <canvas id="monedasChart" height="120"></canvas>
+
+    <!-- Gráfico 2: evolución (simulada) -->
+    <h2 style="margin-top:24px;">Evolución histórica</h2>
+    <canvas id="historicoChart" height="120"></canvas>
+
+    <!-- Resumen y gráfico 3 -->
+    <h2 style="margin-top:24px;">Resumen rápido</h2>
+    <p id="resumen"></p>
+
+    <h2 style="margin-top:24px;">Participación relativa</h2>
+    <canvas id="participacionChart" height="120"></canvas>
+
+    <div class="conv-back">
+      <a class="back" href="{% url 'home' %}">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <script>
+    let chartActual = null;
+    let chartHistorico = null;
+    let chartParticipacion = null;
+
+    async function obtenerDatos() {
+      const base = document.getElementById("base").value;
+      const periodo = document.getElementById("periodo").value;
+      const resp = await fetch(`/api/convertir-moneda-dashboard/?base=${base}&periodo=${periodo}`);
+      return await resp.json();
+    }
+
+    async function actualizar() {
+      const data = await obtenerDatos();
+
+      // Gráfico de barras (comparación actual)
+      const ctx1 = document.getElementById("monedasChart").getContext("2d");
+      if (chartActual) chartActual.destroy();
+      chartActual = new Chart(ctx1, {
+        type: "bar",
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: `Valor en ${data.base}`,
+            data: data.valores,
+            backgroundColor: ["#4e79a7","#f28e2b","#e15759","#76b7b2"],
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              type: "logarithmic",
+              ticks: {
+                callback: v => (v && v.toFixed ? v.toFixed(2) : v)
+              }
+            }
+          }
+        }
+      });
+
+      // Gráfico de líneas (histórico)
+      const ctx2 = document.getElementById("historicoChart").getContext("2d");
+      if (chartHistorico) chartHistorico.destroy();
+      chartHistorico = new Chart(ctx2, {
+        type: "line",
+        data: {
+          labels: data.labels_historico,
+          datasets: data.series
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: "index", intersect: false },
+          scales: {
+            y: { ticks: { callback: v => (v && v.toFixed ? v.toFixed(2) : v) } }
+          }
+        }
+      });
+
+      // Resumen
+      const resumenEl = document.getElementById("resumen");
+      if (data.max_moneda && data.min_moneda) {
+        resumenEl.textContent =
+          `Fecha de datos: ${data.fecha || "N/D"}. ` +
+          `Moneda más fuerte: ${data.max_moneda}. ` +
+          `Moneda más débil: ${data.min_moneda}.`;
+      } else {
+        resumenEl.textContent = "No se pudo calcular el resumen de monedas.";
+      }
+
+      // Gráfico doughnut (participación relativa, porcentajes reales)
+      const ctx3 = document.getElementById("participacionChart").getContext("2d");
+      if (chartParticipacion) chartParticipacion.destroy();
+
+      const total = data.valores.reduce((a, b) => a + b, 0);
+      const porcentajes = total > 0 ? data.valores.map(v => (v / total) * 100) : data.valores;
+
+      chartParticipacion = new Chart(ctx3, {
+        type: "doughnut",
+        data: {
+          labels: data.labels,
+          datasets: [{
+            data: porcentajes,
+            backgroundColor: ["#4e79a7","#f28e2b","#e15759","#76b7b2"],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.label}: ${ctx.parsed.toFixed(2)} %`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    actualizar();
+  </script>
+</body>
+</html>
