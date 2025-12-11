@@ -83,6 +83,7 @@ pip install -r requirements.txt
 ### 5️⃣ Aplicar migraciones de base de datos
 
 python manage.py migrate
+
 python3 manage.py migrate
 
 
@@ -91,6 +92,7 @@ Si falla, eliminar `db.sqlite3` y repetir el comando.
 ### 6️⃣ Crear superusuario (obligatorio para Admin)
 
 python manage.py createsuperuser
+
 python3 manage.py createsuperuser
 
 Ingresar username, email y password y guardarlos para login.
@@ -98,6 +100,7 @@ Ingresar username, email y password y guardarlos para login.
 ### 7️⃣ Cargar países base (Chile, Colombia, Perú)
 
 python manage.py cargar_paises
+
 python3 manage.py cargar_paises
 
 ### 8️⃣ Cargar datos bursátiles desde Excel
@@ -175,13 +178,11 @@ docker ps -a
 
 docker network create kafka-net
 
+
 docker run -d --name zookeeper --network kafka-net -p 2181:2181 zookeeper:3.7
 
-docker run -d --name kafka --network kafka-net -p 9092:9092 ^
--e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 ^
--e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 ^
-confluentinc/cp-kafka:7.5.0
 
+docker run -d --name kafka --network kafka-net -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 confluentinc/cp-kafka:7.5.0
 
 Comprobar:
 
