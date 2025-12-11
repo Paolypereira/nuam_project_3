@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    /* Títulos de sección: AUTENTICACIÓN Y AUTORIZACIÓN, MERCADOS, etc. */
+    #content-main .module caption {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    /* Filas de la tabla: Grupos, Usuarios, Empresas, etc. */
+    #content-main .module table tbody td {
+        font-size: 1.05rem;
+    }
+  </style>
+{% endblock %}

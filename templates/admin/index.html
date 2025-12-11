@@ -1,0 +1,21 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  {# NO ponemos otro h1, ya lo trae el admin #}
+
+  <h2 style="font-size: 1.2rem; margin: 1.5rem 0 0.75rem;">
+    Herramientas técnicas
+  </h2>
+
+  <ul style="list-style: disc; margin-left: 1.5rem;">
+    <li style="font-size: 1.1rem; margin-bottom: 0.35rem;">
+      <a href="{% url 'mer-admin' %}">Diagrama M.E.R.</a>
+    </li>
+    <li style="font-size: 1.1rem; margin-bottom: 0.35rem;">
+      <a href="{% url 'schema-swagger-ui' %}">Doc API (Swagger)</a>
+    </li>
+    <li style="font-size: 1.1rem; margin-bottom: 0.35rem;">
+      <a href="{% url 'schema-redoc' %}">Doc API (Redoc)</a>
+    </li>
+  </ul>
+{% endblock %}

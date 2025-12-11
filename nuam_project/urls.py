@@ -6,7 +6,7 @@ from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from mercados.views import (
     home,
     mer_view,
@@ -21,21 +21,44 @@ from mercados.views import (
     datos_dashboard_monedas,
 )
 
+
 def redirect_to_site(request):
     return HttpResponseRedirect(settings.ADMIN_SITE_URL)
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="NUAM API",
+        default_version="v1",
+        description="API REST de empresas, países y conversor NUAM",
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
 
 urlpatterns = [
     path("ver-sitio/", redirect_to_site, name="ver-sitio"),
 
     path("", home, name="home"),
-    path("catalogo/", TemplateView.as_view(template_name="empresas.html"), name="catalogo"),
-    path("catalogo-data/", empresas_sin_paginacion, name="catalogo-data"),
-    path("mer/", mer_view, name="mer"),
 
+    # Catálogo
+    path("catalogo/", TemplateView.as_view(template_name="empresas.html"), name="catalogo"),
+    path(
+        "catalogo/admin/",
+        TemplateView.as_view(template_name="empresas.html", extra_context={"from_admin": True}),
+        name="catalogo-admin",  # <- NUEVA
+    ),
+    path("catalogo-data/", empresas_sin_paginacion, name="catalogo-data"),
+
+    # MER
+    path("mer/", mer_view, name="mer"),
+    path("mer/admin/", mer_view, name="mer-admin"),  # <- NUEVA
+
+    # Convertidor
     path("convertir-moneda/", convertidor_view, name="convertidor"),
     path("api/convertir-moneda/", convertir_moneda, name="convertir-moneda-api"),
 
-    # NUEVO: dashboard de monedas
+    # Dashboard monedas
     path("dashboard-monedas/", dashboard_monedas, name="dashboard-monedas"),
     path(
         "api/convertir-moneda-dashboard/",
@@ -43,6 +66,7 @@ urlpatterns = [
         name="dashboard-monedas-data",
     ),
 
+    # Cuenta
     path(
         "cuenta/login/",
         auth_views.LoginView.as_view(template_name="cuenta/login.html"),
@@ -58,25 +82,15 @@ urlpatterns = [
     path("cuenta/editar/", editar_cuenta, name="editar-cuenta"),
     path("cuenta/eliminar/", eliminar_cuenta, name="eliminar-cuenta"),
 
+    # API REST
     path("api/", include("mercados.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
-]
 
-
-schema_view = get_schema_view(
-    openapi.Info(
-        title="NUAM API",
-        default_version="v1",
-        description="API REST de empresas, países y conversor NUAM",
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny],
-)
-
-urlpatterns += [
+    # Documentación
     path("docs/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    path("swagger/", RedirectView.as_view(url="/docs/", permanent=False)),
 ]
 
 handler404 = "mercados.views.error_404"

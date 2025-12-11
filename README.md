@@ -83,6 +83,7 @@ pip install -r requirements.txt
 ### 5️⃣ Aplicar migraciones de base de datos
 
 python manage.py migrate
+python3 manage.py migrate
 
 
 Si falla, eliminar `db.sqlite3` y repetir el comando.
@@ -90,31 +91,32 @@ Si falla, eliminar `db.sqlite3` y repetir el comando.
 ### 6️⃣ Crear superusuario (obligatorio para Admin)
 
 python manage.py createsuperuser
-
+python3 manage.py createsuperuser
 
 Ingresar username, email y password y guardarlos para login.
 
 ### 7️⃣ Cargar países base (Chile, Colombia, Perú)
 
 python manage.py cargar_paises
-
+python3 manage.py cargar_paises
 
 ### 8️⃣ Cargar datos bursátiles desde Excel
 
-El archivo Excel está en:
+El archivo Excel de ejemplo está en:
 
 cargas/2025/10/Informe_Bursatil_Regional_2025-08.xlsx
 
-
-Ejemplo de importación en Windows:
+**Windows (PowerShell):**
 
 python manage.py seed_empresas --file "C:\Users\TuUsuario\proyecto\cargas\2025\10\Informe_Bursatil_Regional_2025-08.xlsx"
 
+**Linux (bash, dentro de la carpeta del proyecto):**
+
+python3 manage.py seed_empresas --file "cargas/2025/10/Informe_Bursatil_Regional_2025-08.xlsx"
 
 La salida mostrará algo como:
 
 Empresas creadas: 0, actualizadas: 159, omitidas: 72
-
 
 ### 9️⃣ Ejecutar el servidor de desarrollo
 
@@ -310,34 +312,318 @@ y aceptar el certificado autofirmado.
 
 ---
 
-## 🧹 Archivos ignorados por Git
+## 🚀 Arquitectura de Microservicios (Evaluación 4)
 
-`.gitignore` incluye:
+### Estructura Actual
 
-*.pyc
-pycache/
-.env
-.venv/
-db.sqlite3
-*.xlsx
-/staticfiles/
-logs/
+nuam_project_3/
+├── nuam_project/        # Monolito principal - Puerto 8000
+├── currency-service/    # Microservicio conversión - Puerto 8001
+└── docker-compose.yml
+
+### Endpoints
+
+**Monolito (http://127.0.0.1:8000/):**
+
+| Ruta                                                        | Descripción                                      |
+|-------------------------------------------------------------|--------------------------------------------------|
+| `/convertir-moneda/?monto=10000&moneda=CLP`                 | **API Gateway** → delega al microservicio       |
+| `/catalogo/`                                                | Catálogo productos                               |
+| `/dashboard-monedas/`                                       | Dashboard                                        |
+
+**Microservicio (http://127.0.0.1:8001/):**
+
+| Ruta                                                        | Descripción              |
+|-------------------------------------------------------------|--------------------------|
+| `/api/ping/`                                                | Health check             |
+| `/api/convertir-moneda/?monto=10000&moneda=CLP`             | **Conversión real**      |
+
+### 🖥️ Comandos para Ejecutar (Windows/Linux)
+
+#### 1. Terminal 1 - Microservicio
+
+**Windows (PowerShell)**
+
+cd nuam_project_3\currency-service
+..\ .venv\Scripts\Activate.ps1
+python manage.py runserver 8001
+
+**Linux (bash)**
+
+cd nuam_project_3/currency-service
+source ../.venv/bin/activate
+python3 manage.py runserver 8001
+
+#### 2. Terminal 2 - Monolito
+
+**Windows (PowerShell)**
+
+cd nuam_project_3
+.venv\Scripts\Activate.ps1
+python manage.py runserver 8000
+
+**Linux (bash)**
+
+cd nuam_project_3
+source .venv/bin/activate
+python3 manage.py runserver 8000
+
+#### 3. Probar (cualquier navegador)
+
+- `http://127.0.0.1:8001/api/convertir-moneda/?monto=10000&moneda=CLP`  
+- `http://127.0.0.1:8000/convertir-moneda/?monto=10000&moneda=CLP`  
+
+### 📊 Diagrama
+
+Cliente → Monolito:8000 → HTTP → Currency:8001  
+
+**Logs `rdkafka localhost:9092` son normales (Kafka opcional).**
 
 ---
 
+## 🌐 Publicación con Apache HTTP Server (Reverse Proxy + ProxyPass)
+
+Esta sección explica cómo publicar el monolito NUAM y el microservicio `currency-service` detrás de Apache HTTP Server usando `ProxyPass` y `ProxyPassReverse`, tanto en **Windows** como en **Linux**.[web:140]
+
+### Arquitectura detrás de Apache
+
+- Apache escucha en `http://localhost/` (puerto 80).
+- Monolito NUAM (Django) corre en `http://127.0.0.1:8000/`.
+- Microservicio `currency-service` (Django) corre en `http://127.0.0.1:8001/`.
+- Apache actúa como *reverse proxy*:
+  - `/` → monolito (puerto 8000).
+  - `/currency/` → microservicio (puerto 8001).
+
+---
+
+### 1. Levantar los servicios Django
+
+#### 1.1. Monolito NUAM
+
+Ir a la carpeta del proyecto principal:
+
+cd nuam_project_3
+
+Activar entorno virtual:
+
+**Windows (PowerShell)**
+
+.venv\Scripts\Activate.ps1
+
+**Linux (bash)**
+
+source .venv/bin/activate
+
+Levantar el servidor de desarrollo en 8000:
+
+- Windows:
+
+python manage.py runserver 8000
+
+- Linux:
+
+python3 manage.py runserver 8000
+
+Comprobar:
+
+- `http://127.0.0.1:8000/`
+
+#### 1.2. Microservicio currency-service
+
+Ir a la carpeta del microservicio:
+
+cd nuam_project_3/currency-service
+
+Reutilizar el mismo entorno virtual del proyecto:
+
+**Windows (PowerShell)**
+
+..\ .venv\Scripts\Activate.ps1
+
+**Linux (bash)**
+
+source ../.venv/bin/activate
+
+Levantar el servidor de desarrollo en 8001:
+
+- Windows:
+
+python manage.py runserver 8001
+
+- Linux:
+
+python3 manage.py runserver 8001
+
+Comprobar:
+
+- `http://127.0.0.1:8001/api/ping/`
+- `http://127.0.0.1:8001/api/convertir-moneda/?monto=10000&moneda=CLP`
+
+---
+
+### 2. Configuración de Apache en Windows
+
+#### 2.1. Rutas de instalación típicas
+
+- Carpeta de Apache: `C:\Apache24\`
+- Archivo de configuración principal: `C:\Apache24\conf\httpd.conf`[web:140]
+
+#### 2.2. Activar módulos de proxy
+
+En `C:\Apache24\conf\httpd.conf`, asegurarse de que estas líneas existan y **no** tengan `#` delante:
+
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_http_module modules/mod_proxy_http.so
+ServerName localhost
+
+#### 2.3. VirtualHost con ProxyPass (Windows)
+
+Al final de `httpd.conf` añadir:
+
+<VirtualHost *:80>
+ServerName localhost
+
+ProxyPreserveHost On
+
+# Microservicio currency (prefijo más específico)
+ProxyPass        /currency/   http://127.0.0.1:8001/
+ProxyPassReverse /currency/   http://127.0.0.1:8001/
+
+# Monolito NUAM para el resto de las rutas
+ProxyPass        /           http://127.0.0.1:8000/
+ProxyPassReverse /           http://127.0.0.1:8000/
+
+</VirtualHost> ```
+2.4. Arranque de Apache en Windows (modo desarrollo)
+
+cd C:\Apache24\bin
+httpd.exe -t      # Verificar sintaxis
+httpd.exe         # Ejecutar Apache en primer plano
+
+Mientras esa ventana esté abierta, Apache escucha en http://localhost/.
+
+Comportamiento esperado con los dos Django levantados:
+
+    http://localhost/ → monolito NUAM (internamente 127.0.0.1:8000/).
+
+    http://localhost/currency/api/ping/ → microservicio currency-service (127.0.0.1:8001/api/ping/).
+
+    http://localhost/currency/api/convertir-moneda/?monto=10000&moneda=CLP → microservicio de conversión de moneda.
+
+3. Configuración de Apache en Linux (apache2)
+
+Ejemplo basado en distribuciones tipo Debian/Ubuntu.[web:140]
+3.1. Instalar Apache
+
+sudo apt update
+sudo apt install apache2
+
+Comprobar:
+
+    http://localhost/ → página por defecto de Apache.
+
+3.2. Habilitar módulos necesarios
+
+sudo a2enmod proxy proxy_http headers
+sudo systemctl restart apache2
+
+3.3. Crear VirtualHost con ProxyPass
+
+sudo nano /etc/apache2/sites-available/nuam.conf
+
+Contenido:
+
+<VirtualHost *:80>
+    ServerName localhost
+
+    ProxyPreserveHost On
+
+    # Microservicio currency (prefijo más específico)
+    ProxyPass        /currency/   http://127.0.0.1:8001/
+    ProxyPassReverse /currency/   http://127.0.0.1:8001/
+
+    # Monolito NUAM para el resto de las rutas
+    ProxyPass        /           http://127.0.0.1:8000/
+    ProxyPassReverse /           http://127.0.0.1:8000/
+</VirtualHost>
+
+Guardar y salir.
+3.4. Activar el sitio y recargar Apache
+
+sudo a2ensite nuam.conf
+sudo systemctl reload apache2
+
+Opcional: desactivar el sitio por defecto:
+
+sudo a2dissite 000-default.conf
+sudo systemctl reload apache2
+
+3.5. Levantar servicios Django en Linux
+
+En dos terminales distintas:
+
+# Terminal 1: monolito NUAM
+cd nuam_project_3
+source .venv/bin/activate
+python3 manage.py runserver 8000
+
+# Terminal 2: microservicio currency-service
+cd nuam_project_3/currency-service
+source ../.venv/bin/activate
+python3 manage.py runserver 8001
+
+3.6. Comportamiento esperado en Linux
+
+Con Apache y ambos servicios Django corriendo:
+
+    http://localhost/ → monolito NUAM (reverse proxy hacia 127.0.0.1:8000).
+
+    http://localhost/currency/api/ping/ → microservicio currency-service (127.0.0.1:8001/api/ping/).
+
+    http://localhost/currency/api/convertir-moneda/?monto=10000&moneda=CLP → servicio de conversión de moneda publicado detrás de Apache.
+
+Con esta configuración, la entrega muestra claramente:
+
+    Arquitectura de microservicios (monolito + currency-service).
+
+    Uso de Apache HTTP Server como reverse proxy con ProxyPass / ProxyPassReverse.
+
+    Instrucciones reproducibles para levantar todo en Windows y en Linux.
+
+
 ## 🎓 Sugerencia de recorrido para la evaluación
 
+> Nota: Las rutas se asumen accediendo a través de Apache en `http://localhost/`.  
+> (También se pueden probar directo en Django: `http://127.0.0.1:8000/` y `http://127.0.0.1:8001/`).
+
 1. Mostrar el **dashboard principal** (`/`) con tarjetas y navegación.
-2. Navegar el **catálogo** (`/catalogo/`) mostrando importación desde Excel.
+2. Navegar el **catálogo de empresas** (`/catalogo/`) mostrando importación desde Excel.
 3. Mostrar el **panel admin** (`/admin/`) con CRUD de Empresas.
 4. Demostrar la **API REST** (`/api/empresas/`, `/api/paises/`, `/api/top-empresas/`).
 5. Explorar la documentación (`/swagger/` y `/redoc/`).
 6. Ver el diagrama **M.E.R.** (`/mer/`).
-7. Probar el **convertidor de moneda** (`/convertir-moneda/`).
+7. Probar el **convertidor de moneda**:
+   - Vía monolito: `/convertir-moneda/`
+   - Vía microservicio expuesto por Apache: `/currency/api/convertir-moneda/?monto=10000&moneda=CLP`
 8. Mostrar el **dashboard de monedas** (`/dashboard-monedas/`) explicando sus gráficos.
 9. Mencionar la integración con **Kafka** y los comandos para levantarlo.
 10. Mostrar el **logging** (`logs/django_errors.log`) y el monitoreo con **Sentry**.
-11. Ejecutar el proyecto con **HTTPS local** usando `runsslserver`.
+11. Mostrar la publicación detrás de **Apache HTTP Server** (Reverse Proxy + ProxyPass).
+12. Ejecutar el proyecto con **HTTPS local** usando `runsslserver` (opcional).
+
+
+---
+
+## 🧹 Archivos ignorados por Git
+
+El archivo `.gitignore` excluye:
+
+- Archivos compilados de Python: `*.pyc`, `__pycache__/`
+- Base de datos local: `db.sqlite3`
+- Logs de errores: `logs/`
+- Entornos virtuales: `.venv/`, `venv/`
+- Configuración de IDE: `.vscode/`, `.idea/`
+- Archivos del sistema: `.DS_Store`, `Thumbs.db`
 
 ---
 

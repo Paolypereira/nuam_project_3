@@ -146,5 +146,6 @@ X_FRAME_OPTIONS = "DENY"
 ADMIN_SITE_URL = "http://127.0.0.1:8080"
 ADMIN_LOGIN_TEMPLATE = "admin/custom_login.html"
 LOGIN_URL = "/cuenta/login/"
-LOGIN_REDIRECT_URL = "/cuenta/"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "home"   # que vuelva al menú después de login
+LOGOUT_REDIRECT_URL = "home"  # que vuelva al menú después de logout (incluido admin)
+

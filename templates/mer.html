@@ -16,7 +16,9 @@
     Usa la rueda del mouse / trackpad para hacer zoom sobre el diagrama.
   </div>
 
-  <a class="back" href="{% url 'home' %}">← Volver al inicio</a>
+  <a class="back" href="{% if from_admin %}{% url 'admin:index' %}{% else %}{% url 'home' %}{% endif %}">
+  ← Volver al inicio
+</a>
 
   <script>
     const img = document.getElementById("zoomable");

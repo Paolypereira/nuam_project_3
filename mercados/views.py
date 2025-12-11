@@ -122,9 +122,9 @@ def datos_dashboard_monedas(request):
 
 # -------- DIAGRAMA NUAM (M.E.R.) --------
 def mer_view(request):
-    return render(request, "mer.html", {
-        "title": "Diagrama NUAM (M.E.R.)"
-    })
+    from_admin = request.path.startswith("/mer/admin/")
+    return render(request, "mer.html", {"from_admin": from_admin})
+
 
 
 # -------- VISTA HTML DEL CONVERTIDOR --------

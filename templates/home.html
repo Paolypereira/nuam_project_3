@@ -8,57 +8,40 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="lang-switch">
-      <span>Idioma:</span>
-      <a href="?lang=es">ES</a> |
-      <a href="?lang=en">EN</a>
-    </div>
-
     <h1>NUAM - Mantenedor & API</h1>
     <p class="desc">Panel Principal del Sistema NUAM.</p>
 
     <div class="cards">
-  <div class="card">
-    <h2>Catálogo de empresas</h2>
-    <p>Listado HTML de Empresas registradas en NUAM.</p>
-    <a href="{% url 'catalogo' %}" class="btn">Ver catálogo</a>
-  </div>
+      <div class="card">
+        <h2>Catálogo de empresas</h2>
+        <p>Listado HTML de Empresas registradas en NUAM.</p>
+        <a href="{% url 'catalogo' %}" class="btn">Ver catálogo</a>
+      </div>
 
-  <div class="card">
-    <h2>Diagrama M.E.R.</h2>
-    <p>Modelo Entidad–Relación del Sistema NUAM.</p>
-    <a href="{% url 'mer' %}" class="btn">Ver diagrama</a>
-  </div>
+      <div class="card">
+        <h2>Convertidor de Moneda</h2>
+        <p>Servicio de conversión contra API externa.</p>
+        <a href="{% url 'convertidor' %}" class="btn">Usar convertidor</a>
+      </div>
 
-  <div class="card">
-    <h2>Convertidor de Moneda</h2>
-    <p>Servicio de conversión contra API externa.</p>
-    <a href="{% url 'convertidor' %}" class="btn">Usar convertidor</a>
-  </div>
+      <div class="card">
+        <h2>Dashboard Visualización de Datos</h2>
+        <p>Gráficos con valores de CLP, COP, PEN y UF.</p>
+        <a href="{% url 'dashboard-monedas' %}" class="btn">Ver dashboard</a>
+      </div>
 
-  <div class="card">
-    <h2>Dashboard Visualización de Datos</h2>
-    <p>Gráficos con valores de CLP, COP, PEN y UF.</p>
-    <a href="{% url 'dashboard-monedas' %}" class="btn">Ver dashboard</a>
-  </div>
+      <div class="card">
+        <h2>Gestión de Usuario</h2>
+        <p>Registro, Inicio de sesión y Administración de la cuenta.</p>
+        <a href="{% url 'mi-cuenta' %}" class="btn">Ir a mi cuenta</a>
+      </div>
 
-  <div class="card">
-    <h2>Gestión de Usuario</h2>
-    <p>Registro, Inicio de sesión y Administración de la cuenta.</p>
-    <a href="{% url 'mi-cuenta' %}" class="btn">Ir a mi cuenta</a>
+      <div class="card card-full">
+        <h2>Acceso Administrador</h2>
+        <p>Ingreso al panel de administración del sistema.</p>
+        <a href="{% url 'admin:index' %}" class="btn">Ir al admin</a>
+      </div>
+    </div>
   </div>
-
-  <div class="card">
-    <h2>Gestión de Admin</h2>
-    <p>Acceso al Panel de Administración de Django.</p>
-    <a href="{% url 'admin:index' %}" class="btn">Ir al admin</a>
-  </div>
-
-  <div class="card">
-    <h2>Docs de la API</h2>
-    <p>Documentación Autogenerada (OpenAPI / Swagger) de NUAM.</p>
-    <a href="/swagger/" class="btn">Ver documentación</a>
-  </div>
-</div>
 </body>
 </html>
